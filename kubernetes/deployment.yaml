@@ -1,0 +1,113 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cert-manager-controller
+  labels:
+    app: cert-manager-controller
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cert-manager-controller
+  labels:
+    app: cert-manager-controller
+rules:
+  - apiGroups: [""]
+    resources:
+      - secrets
+      - configmaps
+      - events
+      - namespaces
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: ["cert-manager.io"]
+    resources:
+      - certificates
+      - certificaterequests
+      - issuers
+      - clusterissuers
+      - orders
+      - challenges
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["acme.cert-manager.io"]
+    resources:
+      - orders
+      - challenges
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources:
+      - customresourcedefinitions
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources:
+      - leases
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cert-manager-controller
+  labels:
+    app: cert-manager-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cert-manager-controller
+subjects:
+  - kind: ServiceAccount
+    name: cert-manager-controller
+    namespace: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cert-manager-controller
+  labels:
+    app: cert-manager-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cert-manager-controller
+  template:
+    metadata:
+      labels:
+        app: cert-manager-controller
+    spec:
+      serviceAccountName: cert-manager-controller
+      containers:
+      - name: cert-manager-controller
+        image: cleanstart/cert-manager-controller:latest-dev
+        imagePullPolicy: IfNotPresent
+        # Binary is located at /usr/bin/controller (from docker inspect entrypoint)
+        command: ["/usr/bin/controller"]
+        env:
+        - name: SSL_CERT_FILE
+          value: /etc/ssl/certs/ca-certificates.crt
+        - name: PATH
+          value: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 1000
+          readOnlyRootFilesystem: false
+      securityContext:
+        fsGroup: 1000
+
