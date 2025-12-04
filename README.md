@@ -4,7 +4,7 @@ Cert-manager-controller is an automated certificate management solution for Kube
 
 **📌 Base Foundation:** Security-hardened, minimal base OS designed for enterprise containerized environments from CleanStart Registry.
 
-**Image Path:** `cleanstart/cert-manager-controller`
+**Image Path:** `ghcr.io/cleanstart-containers/cert-manager-controller`
 
 **Registry:** CleanStart Registry
 
@@ -12,9 +12,9 @@ Cert-manager-controller is an automated certificate management solution for Kube
 
 ## Overview
 
-The `cleanstart/cert-manager-controller:latest-dev` image provides a drop-in replacement for the standard cert-manager controller with security hardening applied. The Controller is the main orchestrator that manages the entire certificate lifecycle in Kubernetes - it watches for Certificate and CertificateRequest resources, coordinates with Issuers and ClusterIssuers to obtain certificates, manages certificate renewal, and updates Kubernetes secrets with certificate data. This CleanStart image enables automated TLS certificate provisioning and renewal without manual intervention while maintaining strict security posture.
+The `ghcr.io/cleanstart-containers/cert-manager-controller:latest-dev` image provides a drop-in replacement for the standard cert-manager controller with security hardening applied. The Controller is the main orchestrator that manages the entire certificate lifecycle in Kubernetes - it watches for Certificate and CertificateRequest resources, coordinates with Issuers and ClusterIssuers to obtain certificates, manages certificate renewal, and updates Kubernetes secrets with certificate data. This CleanStart image enables automated TLS certificate provisioning and renewal without manual intervention while maintaining strict security posture.
 
-**Image:** `cleanstart/cert-manager-controller:latest-dev`  
+**Image:** `ghcr.io/cleanstart-containers/cert-manager-controller:latest-dev`  
 **Digest:** `sha256:f2b6417563efb81bf56973e773f1c947de085ca1682da1caaf8637be7f4db32f`
 
 **Technical Specifications:**
@@ -82,7 +82,7 @@ The Controller operates as the main orchestrator that manages certificate resour
 
 ## CleanStart Security Features
 
-The `cleanstart/cert-manager-controller:latest-dev` image implements multiple layers of security:
+The `ghcr.io/cleanstart-containers/cert-manager-controller:latest-dev` image implements multiple layers of security:
 
 ### CleanStart Security Enhancements
 
@@ -118,15 +118,15 @@ These security features make the CleanStart image suitable for production enviro
 
 Download the container image from the registry:
 ```bash
-docker pull cleanstart/cert-manager-controller:latest
-docker pull cleanstart/cert-manager-controller:latest-dev
+docker pull ghcr.io/cleanstart-containers/cert-manager-controller:latest
+docker pull ghcr.io/cleanstart-containers/cert-manager-controller:latest-dev
 ```
 
 ### Basic Run
 
 Run the container with basic configuration:
 ```bash
-docker run -it --name cert-manager cleanstart/cert-manager-controller:latest --v=2 --cluster-resource-namespace=cert-manager
+docker run -it --name cert-manager ghcr.io/cleanstart-containers/cert-manager-controller:latest --v=2 --cluster-resource-namespace=cert-manager
 ```
 
 ### Production Deployment
@@ -138,7 +138,7 @@ docker run -d --name cert-manager-prod \
   --security-opt=no-new-privileges \
   --user 1000:1000 \
   -v /etc/cert-manager:/etc/cert-manager \
-  cleanstart/cert-manager-controller:latest
+  ghcr.io/cleanstart-containers/cert-manager-controller:latest
 ```
 
 ### Volume Mount
@@ -147,14 +147,14 @@ Mount local directory for persistent data:
 ```bash
 docker run -v /etc/cert-manager:/etc/cert-manager \
   -v /var/run/cert-manager:/var/run/cert-manager \
-  cleanstart/cert-manager-controller:latest
+  ghcr.io/cleanstart-containers/cert-manager-controller:latest
 ```
 
 ### Port Forwarding
 
 Run with custom port mappings:
 ```bash
-docker run -p 9402:9402 cleanstart/cert-manager-controller:latest
+docker run -p 9402:9402 ghcr.io/cleanstart-containers/cert-manager-controller:latest
 ```
 
 ---
