@@ -84,7 +84,6 @@ kubectl exec -it deployment/cert-manager-controller -- ps aux | grep controller
 
 ```bash
 kubectl exec -it deployment/cert-manager-controller -- id
-kubectl describe pod -l app=cert-manager-controller | grep -A 10 "Security Context"
 kubectl exec -it deployment/cert-manager-controller -- ls -la /etc/ssl/certs/ca-certificates.crt
 ```
 
@@ -228,6 +227,11 @@ Or individually:
 ```bash
 kubectl delete deployment,serviceaccount cert-manager-controller
 kubectl delete clusterrole,clusterrolebinding cert-manager-controller
+```
+
+```bash
+kubectl delete clusterissuer.cert-manager.io/selfsigned-issuer
+kubectl delete certificate.cert-manager.io/test-cert
 ```
 
 **Note:** ClusterRole and ClusterRoleBinding are cluster-wide - ensure no dependencies before deletion.
